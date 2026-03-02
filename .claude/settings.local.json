@@ -7,7 +7,13 @@
       "Bash(echo \\(none found\\):*)",
       "Bash(grep:*)",
       "Bash(cd \"C:\\\\Users\\\\gabri\\\\Downloads\\\\PlantsIO\" && npm run build 2>&1)",
-      "Bash(rm -rf \"C:\\\\Users\\\\gabri\\\\Downloads\\\\PlantsIO\\\\.next\" && cd \"C:\\\\Users\\\\gabri\\\\Downloads\\\\PlantsIO\" && npm run build 2>&1)"
+      "Bash(rm -rf \"C:\\\\Users\\\\gabri\\\\Downloads\\\\PlantsIO\\\\.next\" && cd \"C:\\\\Users\\\\gabri\\\\Downloads\\\\PlantsIO\" && npm run build 2>&1)",
+      "Bash(mkdir:*)",
+      "Bash(mv components:*)",
+      "Bash(cp:*)",
+      "Bash(mv node_modules:*)",
+      "Bash(rm:*)",
+      "Bash(npm run:)"
     ]
   }
 }

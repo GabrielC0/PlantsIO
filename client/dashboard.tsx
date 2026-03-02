@@ -196,7 +196,7 @@ export default function IrrigationDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="dashboard__stat-card" style={{ animationDelay: "0.1s" }}>
+          <Card className="dashboard__stat-card">
             <CardContent className="dashboard__stat-content">
               <div className="dashboard__stat-inner">
                 <div>
@@ -210,7 +210,7 @@ export default function IrrigationDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="dashboard__stat-card" style={{ animationDelay: "0.2s" }}>
+          <Card className="dashboard__stat-card">
             <CardContent className="dashboard__stat-content">
               <div className="dashboard__stat-inner">
                 <div>
@@ -226,7 +226,7 @@ export default function IrrigationDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="dashboard__stat-card" style={{ animationDelay: "0.3s" }}>
+          <Card className="dashboard__stat-card">
             <CardContent className="dashboard__stat-content">
               <div className="dashboard__stat-inner">
                 <div>
@@ -265,7 +265,7 @@ export default function IrrigationDashboard() {
 
         {/* Charts */}
         <div className="dashboard__charts">
-          <Card className="dashboard__chart-card" style={{ animationDelay: "0.2s" }}>
+          <Card className="dashboard__chart-card">
             <CardHeader>
               <CardTitle className="dashboard__card-title">Durée d&apos;arrosage quotidienne</CardTitle>
               <CardDescription>Secondes d&apos;arrosage par jour</CardDescription>
@@ -294,7 +294,7 @@ export default function IrrigationDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="dashboard__chart-card" style={{ animationDelay: "0.3s" }}>
+          <Card className="dashboard__chart-card">
             <CardHeader>
               <CardTitle className="dashboard__card-title">Consommation mensuelle</CardTitle>
               <CardDescription>Évolution de la consommation d&apos;eau sur 6 mois</CardDescription>
@@ -319,7 +319,7 @@ export default function IrrigationDashboard() {
         </div>
 
         {/* Recent activity */}
-        <Card className="dashboard__activity-card" style={{ animationDelay: "0.4s" }}>
+        <Card className="dashboard__activity-card">
           <CardHeader>
             <CardTitle className="dashboard__card-title">Activité récente</CardTitle>
             <CardDescription>Les 5 derniers arrosages</CardDescription>
@@ -586,7 +586,7 @@ export default function IrrigationDashboard() {
               <TableBody>
                 {[...Array(10)].map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell className="history__table-cell">2024-01-{String(15 - i).padStart(2, "0")}</TableCell>
+                    <TableCell className="history__table-cell">{String(15 - i).padStart(2, "0")}/01</TableCell>
                     <TableCell className="history__table-cell">07:00</TableCell>
                     <TableCell className="history__table-cell">5 min</TableCell>
                     <TableCell className="history__table-cell">45 L</TableCell>
