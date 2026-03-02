@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd /c/Users/gabri/Downloads/PlantsIO && pnpm add sass --save-dev 2>&1)",
+      "Bash(cd /c/Users/gabri/Downloads/PlantsIO && npm install sass --save-dev 2>&1)",
+      "Bash(tail:*)",
+      "Bash(echo \\(none found\\):*)",
+      "Bash(grep:*)",
+      "Bash(cd \"C:\\\\Users\\\\gabri\\\\Downloads\\\\PlantsIO\" && npm run build 2>&1)",
+      "Bash(rm -rf \"C:\\\\Users\\\\gabri\\\\Downloads\\\\PlantsIO\\\\.next\" && cd \"C:\\\\Users\\\\gabri\\\\Downloads\\\\PlantsIO\" && npm run build 2>&1)"
+    ]
+  }
+}

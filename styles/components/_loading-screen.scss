@@ -1,0 +1,193 @@
+@import '../mixins';
+
+// ══════════════════════════════════════
+// LOADING SCREEN
+// ══════════════════════════════════════
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+
+  // Rich gradient backdrop
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%,   hsl(var(--primary) / 0.12), transparent),
+    radial-gradient(ellipse 60% 50% at 80% 100%,  hsl(var(--accent)  / 0.10), transparent),
+    hsl(var(--background));
+
+  animation: fadeIn 0.4s ease-out both;
+
+  // ── Decorative floating orbs ──────
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    border-radius: $radius-full;
+    pointer-events: none;
+  }
+
+  &::before {
+    width: 28rem;
+    height: 28rem;
+    top: -8rem;
+    left: -8rem;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.07), transparent 70%);
+    animation: float 6s ease-in-out infinite;
+  }
+
+  &::after {
+    width: 22rem;
+    height: 22rem;
+    bottom: -6rem;
+    right: -6rem;
+    background: radial-gradient(circle, hsl(var(--accent) / 0.07), transparent 70%);
+    animation: float 8s ease-in-out infinite reverse;
+  }
+
+  // ── Icon container ────────────────
+  &__icon-container {
+    position: relative;
+    margin-bottom: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // Expanding ping rings
+  &__icon-ping {
+    position: absolute;
+    inset: -12px;
+    border-radius: $radius-full;
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--primary) / 0.3),
+      hsl(var(--accent) / 0.1),
+      hsl(var(--primary) / 0.3)
+    );
+    animation: ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  // Second slower ring
+  &__icon-ping-2 {
+    position: absolute;
+    inset: -24px;
+    border-radius: $radius-full;
+    background: conic-gradient(
+      from 180deg,
+      hsl(var(--accent) / 0.15),
+      transparent,
+      hsl(var(--accent) / 0.15)
+    );
+    animation: ping 1.4s cubic-bezier(0, 0, 0.2, 1) 0.3s infinite;
+  }
+
+  // Icon bubble
+  &__icon-bubble {
+    position: relative;
+    border-radius: $radius-full;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    padding: 1.75rem;
+    box-shadow:
+      0 0 0 6px hsl(var(--primary) / 0.12),
+      0 24px 48px -8px hsl(var(--primary) / 0.45),
+      0 8px 16px -4px hsl(var(--accent) / 0.3);
+
+    svg {
+      width: 3.5rem;
+      height: 3.5rem;
+      color: #fff;
+      display: block;
+      animation: bounce-subtle 2s ease-in-out infinite;
+      filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.15));
+    }
+  }
+
+  // ── Title ─────────────────────────
+  &__title {
+    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(var(--accent)),
+      hsl(var(--primary))
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation:
+      slideUp 0.6s $ease-out 0.15s both,
+      shimmer 3s linear 0.8s infinite;
+
+    @include sm { font-size: 2.5rem; }
+  }
+
+  // ── Subtitle ──────────────────────
+  &__subtitle {
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+    animation: slideUp 0.6s $ease-out 0.25s both;
+  }
+
+  // ── Progress bar ──────────────────
+  &__progress-bar {
+    width: 18rem;
+    height: 6px;
+    background-color: hsl(var(--muted));
+    border-radius: $radius-full;
+    overflow: hidden;
+    animation: slideUp 0.5s $ease-out 0.35s both;
+    box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.08);
+
+    @include sm { width: 22rem; }
+  }
+
+  &__progress-fill {
+    height: 100%;
+    border-radius: $radius-full;
+    background: linear-gradient(
+      90deg,
+      hsl(var(--primary)),
+      hsl(var(--accent)),
+      hsl(var(--primary))
+    );
+    background-size: 200% 100%;
+    transition: width 0.25s $ease-smooth;
+    box-shadow: 0 0 12px hsl(var(--primary) / 0.5);
+
+    // Shimmer modifier (inline loading in dashboard)
+    &--shimmer {
+      width: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.45) 50%,
+        transparent 100%
+      );
+      background-size: 600px 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+      box-shadow: none;
+    }
+  }
+
+  // ── Status text ───────────────────
+  &__status {
+    margin-top: 1.25rem;
+    font-size: 0.8125rem;
+    color: hsl(var(--muted-foreground));
+    letter-spacing: 0.04em;
+    animation: pulse-slow 2.5s ease-in-out infinite;
+  }
+}

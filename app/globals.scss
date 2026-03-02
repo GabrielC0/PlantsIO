@@ -1,0 +1,106 @@
+// Tailwind directives – required for shadcn/ui components
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// ──────────────────────────────────────
+// CSS Custom Properties (design tokens)
+// ──────────────────────────────────────
+@layer base {
+  :root {
+    // ── White + blue palette ─────────
+    --background: 0 0% 100%;
+    --foreground: 215 32% 18%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 32% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 32% 18%;
+
+    --primary: 217 91% 60%;           // vivid blue  #3b82f6
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 213 94% 68%;         // lighter blue #60a5fa
+    --secondary-foreground: 217 40% 20%;
+
+    --muted: 214 32% 93%;             // light blue-grey
+    --muted-foreground: 215 16% 50%;
+
+    --accent: 199 89% 48%;            // sky blue #0ea5e9
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;         // vivid red #ef4444
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem;
+
+    --success: 142 72% 45%;           // vivid green #22c55e zone
+    --warning: 38 92% 50%;
+    --info: 217 91% 60%;
+
+    // Charts: blue → green → sky → red → amber
+    --chart-1: 217 91% 60%;
+    --chart-2: 142 72% 45%;
+    --chart-3: 199 89% 48%;
+    --chart-4: 0 84% 60%;
+    --chart-5: 38 92% 50%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;        // deep navy
+    --foreground: 210 20% 95%;
+
+    --card: 222 40% 14%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 222 40% 14%;
+    --popover-foreground: 210 20% 95%;
+
+    --primary: 217 91% 62%;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 217 33% 25%;
+    --secondary-foreground: 210 20% 95%;
+
+    --muted: 217 33% 20%;
+    --muted-foreground: 215 16% 60%;
+
+    --accent: 199 89% 48%;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 20% 95%;
+
+    --border: 217 33% 22%;
+    --input: 217 33% 22%;
+    --ring: 217 91% 62%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans, sans-serif);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+// ──────────────────────────────────────
+// SCSS component styles
+// (imported after Tailwind → higher cascade priority for overrides)
+// ──────────────────────────────────────
+@import '../styles/animations';
+@import '../styles/components/loading-screen';
+@import '../styles/components/dashboard';

@@ -1,0 +1,106 @@
+@import 'variables';
+
+// ══════════════════════════════════════
+// KEYFRAMES
+// ══════════════════════════════════════
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+// Spring entrance — cards, modals
+@keyframes cardEnter {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.96); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+// Slow opacity pulse
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+// Glow ring pulse (pump button states)
+@keyframes pump-ring-green {
+  0%   { box-shadow: 0 0 0 0    rgba(34, 197, 94, 0.55),  0 20px 50px -8px rgba(34, 197, 94, 0.45); }
+  70%  { box-shadow: 0 0 0 20px rgba(34, 197, 94, 0),     0 20px 50px -8px rgba(34, 197, 94, 0.25); }
+  100% { box-shadow: 0 0 0 0    rgba(34, 197, 94, 0),     0 20px 50px -8px rgba(34, 197, 94, 0.45); }
+}
+
+@keyframes pump-ring-red {
+  0%   { box-shadow: 0 0 0 0    rgba(239, 68, 68, 0.55),  0 20px 50px -8px rgba(239, 68, 68, 0.45); }
+  70%  { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0),     0 20px 50px -8px rgba(239, 68, 68, 0.25); }
+  100% { box-shadow: 0 0 0 0    rgba(239, 68, 68, 0),     0 20px 50px -8px rgba(239, 68, 68, 0.45); }
+}
+
+// Icon bounce
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+// Loading bar shimmer
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+
+// Ping ring (loading icon)
+@keyframes ping {
+  75%, 100% { transform: scale(2.4); opacity: 0; }
+}
+
+// Rotating spin
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+// Float (sidebar brand icon)
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-5px); }
+}
+
+// ══════════════════════════════════════
+// UTILITY CLASSES
+// ══════════════════════════════════════
+.animate-fadeIn        { animation: fadeIn        0.5s $ease-out both; }
+.animate-slideUp       { animation: slideUp       0.5s $ease-out both; }
+.animate-slideDown     { animation: slideDown     0.4s $ease-out both; }
+.animate-cardEnter     { animation: cardEnter     0.55s $ease-spring both; }
+.animate-pulse-slow    { animation: pulse-slow    2.5s ease-in-out infinite; }
+.animate-spin-slow     { animation: spin-slow     3s linear infinite; }
+.animate-bounce-subtle { animation: bounce-subtle 2s ease-in-out infinite; }
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 100%
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.transition-all-smooth {
+  transition: all 0.35s $ease-smooth;
+}

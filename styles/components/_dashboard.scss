@@ -1,0 +1,1146 @@
+@import '../mixins';
+
+// ══════════════════════════════════════
+// LAYOUT  –  outer app shell
+// ══════════════════════════════════════
+.layout {
+  // ── Mobile: vertical column (topbar → content → bottom nav) ──
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+
+  background:
+    radial-gradient(ellipse 70% 50% at 0%   0%,   hsl(var(--primary) / 0.07), transparent),
+    radial-gradient(ellipse 60% 50% at 100% 100%,  hsl(var(--accent)  / 0.07), transparent),
+    hsl(var(--background));
+
+  // ── Desktop: switch to row (sidebar | main) ───
+  @include lg { flex-direction: row; }
+
+  // ── Sidebar (desktop only) ────────
+  &__sidebar {
+    display: none;
+
+    @include lg {
+      display: flex;
+      flex-direction: column;
+      width: $sidebar-width;
+      flex-shrink: 0;
+      background: hsl(var(--card) / 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-right: 1px solid hsl(var(--border) / 0.6);
+      box-shadow: 4px 0 32px hsl(var(--primary) / 0.07);
+      position: relative;
+      z-index: 10;
+    }
+  }
+
+  // ── Main area ─────────────────────
+  &__main {
+    flex: 1;
+    min-height: 0; // critical: lets flex child shrink below content size
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+
+    &::-webkit-scrollbar        { width: 5px; }
+    &::-webkit-scrollbar-track  { background: transparent; }
+    &::-webkit-scrollbar-thumb  {
+      background: hsl(var(--border));
+      border-radius: $radius-full;
+    }
+  }
+
+  // ── Mobile top bar (sticky inside layout__main) ──
+  &__mobile-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    height: 3.5rem;
+    flex-shrink: 0;
+    background:
+      linear-gradient(90deg, hsl(var(--primary) / 0.06), hsl(var(--accent) / 0.04)),
+      hsl(var(--card) / 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid hsl(var(--border) / 0.5);
+    box-shadow: 0 2px 16px rgb(0 0 0 / 0.06);
+
+    @include lg { display: none; }
+  }
+
+  // ── Mobile brand (topbar left) ────
+  &__mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: hsl(var(--primary));
+      filter: drop-shadow(0 1px 4px hsl(var(--primary) / 0.4));
+    }
+
+    span {
+      font-size: 0.9375rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+
+  // ── Content wrapper ───────────────
+  &__content {
+    padding: 1rem;
+    max-width: 82rem;
+    margin: 0 auto;
+
+    @include sm { padding: 1.5rem; }
+    @include lg { padding: 2.5rem; }
+  }
+
+  // ══════════════════════════════════
+  // BOTTOM NAVIGATION
+  // Uses flexbox (NOT position:fixed) so it's always visible on mobile.
+  // Acts as the last flex child in the column layout.
+  // ══════════════════════════════════
+  &__bottom-nav {
+    display: flex;
+    flex-shrink: 0;
+    align-items: stretch;
+    height: calc(4rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: hsl(var(--card));
+    border-top: 1px solid hsl(var(--border) / 0.7);
+    box-shadow: 0 -4px 24px rgb(0 0 0 / 0.07);
+
+    // Hidden on desktop (sidebar takes over navigation)
+    @include lg { display: none; }
+  }
+
+  &__bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    border: none;
+    background: transparent;
+    color: hsl(var(--muted-foreground));
+    cursor: pointer;
+    padding: 0.5rem 0.25rem;
+    position: relative;
+    transition: color 0.2s $ease-smooth;
+    -webkit-tap-highlight-color: transparent;
+
+    svg {
+      width: 1.375rem;
+      height: 1.375rem;
+      transition: transform 0.25s $ease-spring, filter 0.25s;
+    }
+
+    span {
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    // Active state: blue pill + icon lift + glow
+    &--active {
+      color: hsl(var(--primary));
+
+      svg {
+        transform: translateY(-2px) scale(1.12);
+        filter: drop-shadow(0 2px 6px hsl(var(--primary) / 0.45));
+      }
+
+      span { font-weight: 700; }
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2rem;
+        height: 3px;
+        border-radius: 0 0 $radius-full $radius-full;
+        background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+        box-shadow: 0 0 8px hsl(var(--primary) / 0.5);
+      }
+    }
+
+    &:hover:not(.layout__bottom-nav-item--active) {
+      color: hsl(var(--foreground) / 0.7);
+      svg { transform: translateY(-1px) scale(1.05); }
+    }
+  }
+}
+
+// ══════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════
+.sidebar {
+  // ── Header / brand ────────────────
+  &__header {
+    padding: 1.5rem 1.25rem;
+    border-bottom: 1px solid hsl(var(--border) / 0.5);
+    background: linear-gradient(
+      to bottom,
+      hsl(var(--primary) / 0.04),
+      transparent
+    );
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__brand-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  // Square logo icon with gradient + glow
+  &__brand-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: $radius-md;
+    padding: 0.4rem;
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    color: #fff;
+    box-shadow:
+      0 4px 14px hsl(var(--primary) / 0.4),
+      0 1px 3px  rgb(0 0 0 / 0.1);
+    animation: float 4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  &__brand-name {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+
+    span {
+      display: block;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: hsl(var(--muted-foreground));
+    }
+  }
+
+  &__close-btn svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  // ── Navigation ────────────────────
+  &__nav {
+    padding: 1rem 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+  }
+
+  &__nav-section {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground) / 0.7);
+    padding: 0.75rem 0.75rem 0.375rem;
+    margin-top: 0.25rem;
+  }
+
+  &__nav-item {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0.875rem;
+    border-radius: $radius-md;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: hsl(var(--muted-foreground));
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-align: left;
+    transition:
+      background-color 0.2s $ease-smooth,
+      color            0.2s $ease-smooth,
+      transform        0.15s $ease-smooth;
+    overflow: hidden;
+
+    // Ripple background on hover
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: hsl(var(--primary) / 0.08);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    &:hover {
+      color: hsl(var(--primary));
+      transform: translateX(2px);
+
+      &::before { opacity: 1; }
+    }
+
+    // ── Active state ───────────────
+    &--active {
+      background: linear-gradient(
+        135deg,
+        hsl(var(--primary)),
+        hsl(var(--accent))
+      );
+      color: hsl(var(--primary-foreground));
+      box-shadow:
+        0 4px 16px hsl(var(--primary) / 0.35),
+        0 1px 3px  rgb(0 0 0 / 0.08);
+      font-weight: 600;
+
+      &::before { display: none; }
+
+      &:hover {
+        color: hsl(var(--primary-foreground));
+        transform: translateX(2px);
+        box-shadow:
+          0 6px 20px hsl(var(--primary) / 0.45),
+          0 2px 4px  rgb(0 0 0 / 0.1);
+      }
+    }
+  }
+
+  &__nav-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    transition: transform 0.2s $ease-spring;
+
+    .sidebar__nav-item:hover & { transform: scale(1.15); }
+    .sidebar__nav-item--active & { transform: none; }
+  }
+
+  // ── Sidebar footer ────────────────
+  &__footer {
+    padding: 1rem 0.875rem;
+    border-top: 1px solid hsl(var(--border) / 0.4);
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground) / 0.6);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+// ══════════════════════════════════════
+// SHARED — section headers + card titles
+// ══════════════════════════════════════
+.dashboard__card-title,
+.scheduling__card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+
+  @include sm { font-size: 1.125rem; }
+}
+
+// Section page title
+%section-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+
+  @include sm { font-size: 1.875rem; }
+}
+
+// Shared card hover lift
+%card-lift {
+  transition:
+    box-shadow  0.3s $ease-smooth,
+    transform   0.3s $ease-smooth,
+    border-color 0.3s $ease-smooth;
+
+  &:hover {
+    box-shadow: $shadow-lg, 0 0 0 1px hsl(var(--primary) / 0.08);
+    transform: translateY(-3px);
+    border-color: hsl(var(--primary) / 0.15);
+  }
+}
+
+// ══════════════════════════════════════
+// DASHBOARD SECTION
+// ══════════════════════════════════════
+.dashboard {
+
+  // ── Header row ────────────────────
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    animation: slideDown 0.45s $ease-out both;
+
+    @include sm {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.75rem;
+    }
+    @include lg { margin-bottom: 2rem; }
+  }
+
+  &__title {
+    @extend %section-title;
+    background: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--foreground) / 0.7));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  &__badge-wrapper {
+    // Hidden on mobile — connection status lives in the topbar
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+
+    @include lg { display: flex; }
+  }
+
+  &__badge-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+    margin-right: 0.25rem;
+  }
+
+  &__badge--connected {
+    background: linear-gradient(135deg, #4ade80, #16a34a);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 12px rgba(34, 197, 94, 0.55);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    animation: pulse-slow 3s ease-in-out infinite;
+
+    &:hover {
+      background: linear-gradient(135deg, #22c55e, #15803d);
+      box-shadow: 0 3px 16px rgba(34, 197, 94, 0.65);
+    }
+  }
+
+  &__badge--small {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  // ── Stats grid ────────────────────
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); // 2-col on mobile
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+
+    @include lg  { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+  }
+
+  &__stat-card {
+    animation: cardEnter 0.55s $ease-spring both;
+    @extend %card-lift;
+
+    // Animated top accent on hover
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: $radius-lg $radius-lg 0 0;
+      background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    position: relative;
+    overflow: hidden;
+
+    &:hover::after { opacity: 1; }
+  }
+
+  &__stat-content {
+    padding: 0.875rem;
+
+    @include sm  { padding: 1.25rem; }
+    @include lg  { padding: 1.375rem; }
+    @include xl  { padding: 1.5rem; }
+  }
+
+  &__stat-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  &__stat-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.375rem;
+    line-height: 1;
+  }
+
+  &__stat-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: hsl(var(--foreground));
+
+    @include sm  { font-size: 1.5rem; }
+    @include lg  { font-size: 1.375rem; }
+    @include xl  { font-size: 1.625rem; }
+  }
+
+  &__stat-value--lg {
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  &__stat-value-sub {
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    margin-top: 0.125rem;
+  }
+
+  // Stat icon — modern rounded square
+  &__stat-icon {
+    padding: 0.75rem;
+    border-radius: $radius-md;
+    flex-shrink: 0;
+    transition: transform 0.25s $ease-spring;
+
+    svg {
+      width: 1.375rem;
+      height: 1.375rem;
+      display: block;
+    }
+
+    .dashboard__stat-card:hover & {
+      transform: scale(1.1) rotate(-4deg);
+    }
+
+    // Vivid green — pump ON (running)
+    &--pump-on {
+      background: linear-gradient(135deg, #4ade80, #16a34a);
+      box-shadow: 0 6px 20px -3px rgba(22, 163, 74, 0.65);
+      svg {
+        color: #fff;
+        animation: pulse-slow 2s ease-in-out infinite;
+      }
+    }
+
+    // Vivid red — pump OFF (stopped)
+    &--pump-off {
+      background: linear-gradient(135deg, #f87171, #dc2626);
+      box-shadow: 0 6px 20px -3px rgba(220, 38, 38, 0.55);
+      svg { color: #fff; }
+    }
+
+    // Vivid blue — matches new primary
+    &--mode-auto {
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+      box-shadow: 0 6px 20px -3px hsl(var(--primary) / 0.55);
+      svg { color: #fff; }
+    }
+
+    &--mode-manual {
+      background: hsl(var(--muted));
+      box-shadow: $shadow-xs;
+      svg { color: hsl(var(--muted-foreground)); }
+    }
+
+    &--schedule {
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      box-shadow: 0 6px 20px -3px rgba(217, 119, 6, 0.55);
+      svg { color: #fff; }
+    }
+
+    &--history {
+      background: linear-gradient(135deg, #818cf8, #4f46e5);
+      box-shadow: 0 6px 20px -3px rgba(79, 70, 229, 0.55);
+      svg { color: #fff; }
+    }
+  }
+
+  // ── Pump control card ─────────────
+  &__pump-section {
+    margin-bottom: 1.5rem;
+    animation: slideUp 0.5s $ease-out 0.1s both;
+    @extend %card-lift;
+  }
+
+  &__pump-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+
+    @include sm { padding: 2rem 1rem; }
+    @include lg { padding: 2.5rem 1rem; }
+  }
+
+  // Giant circular pump button
+  &__pump-btn {
+    position: relative;
+    width: 8rem;
+    height: 8rem;
+    border-radius: $radius-full;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      transform  0.25s $ease-spring,
+      box-shadow 0.25s $ease-smooth;
+
+    @include sm { width: 10rem; height: 10rem; }
+    @include lg { width: 11rem; height: 11rem; }
+
+    // Outer glow ring (always present, white)
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: $radius-full;
+      opacity: 0.25;
+      transition: opacity 0.3s, inset 0.3s $ease-spring;
+    }
+
+    &:hover {
+      transform: scale(1.07);
+      &::before { inset: -12px; opacity: 0.4; }
+    }
+
+    &:active { transform: scale(0.97); }
+
+    svg {
+      width: 3rem;
+      height: 3rem;
+      filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.15));
+
+      @include sm { width: 3.75rem; height: 3.75rem; }
+      @include lg { width: 4.5rem; height: 4.5rem; }
+    }
+
+    // ── ON (red, running) ──────────
+    &--on {
+      background: linear-gradient(135deg, #f87171, #dc2626, #b91c1c);
+      animation: pump-ring-red 2s ease-in-out infinite;
+
+      &::before {
+        background: radial-gradient(circle, rgba(239, 68, 68, 0.25), transparent 70%);
+      }
+
+      svg { animation: pulse-slow 1.5s ease-in-out infinite; }
+    }
+
+    // ── OFF (green, ready) ─────────
+    &--off {
+      background: linear-gradient(135deg, #4ade80, #22c55e, #15803d);
+      animation: pump-ring-green 2.5s ease-in-out infinite;
+
+      &::before {
+        background: radial-gradient(circle, rgba(34, 197, 94, 0.25), transparent 70%);
+      }
+    }
+  }
+
+  &__pump-hint {
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    text-align: center;
+    color: hsl(var(--muted-foreground));
+    letter-spacing: 0.01em;
+  }
+
+  // ── Charts grid ───────────────────
+  &__charts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+
+    @include lg { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  &__chart-card {
+    animation: slideUp 0.5s $ease-out 0.2s both;
+    @extend %card-lift;
+  }
+
+  &__chart-container {
+    height: 200px;
+
+    @include sm { height: 250px; }
+    @include lg { height: 280px; }
+  }
+
+  // ── Activity table card ───────────
+  &__activity-card {
+    animation: slideUp 0.5s $ease-out 0.3s both;
+    @extend %card-lift;
+  }
+
+  &__table-wrapper {
+    overflow-x: auto;
+
+    &::-webkit-scrollbar       { height: 4px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb {
+      background: hsl(var(--border));
+      border-radius: $radius-full;
+    }
+  }
+
+  &__table-cell {
+    font-size: 0.8125rem;
+    font-weight: 450;
+
+    @include sm { font-size: 0.875rem; }
+  }
+
+  // Card title shared
+  &__card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+
+    @include sm { font-size: 1.0625rem; }
+  }
+}
+
+// ══════════════════════════════════════
+// SCHEDULING SECTION
+// ══════════════════════════════════════
+.scheduling {
+  &__header {
+    margin-bottom: 2rem;
+    animation: slideDown 0.4s $ease-out both;
+  }
+
+  &__title {
+    @extend %section-title;
+    margin-bottom: 0.375rem;
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.5;
+  }
+
+  &__auto-mode-card {
+    margin-bottom: 1.25rem;
+    animation: slideUp 0.4s $ease-out 0.05s both;
+  }
+
+  &__auto-mode-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  &__auto-mode-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  &__auto-mode-desc {
+    font-size: 0.8125rem;
+    color: hsl(var(--muted-foreground));
+    margin-top: 0.125rem;
+    line-height: 1.4;
+  }
+
+  &__schedules-card {
+    margin-bottom: 1.25rem;
+    animation: slideUp 0.45s $ease-out 0.1s both;
+  }
+
+  &__schedules-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    @include sm {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+  }
+
+  &__add-btn {
+    width: 100%;
+    flex-shrink: 0;
+
+    @include sm { width: auto; }
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+  }
+
+  // Empty state
+  &__empty-state {
+    text-align: center;
+    padding: 3.5rem 1rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  &__empty-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    margin: 0 auto 1rem;
+    opacity: 0.35;
+    color: hsl(var(--primary));
+  }
+
+  &__empty-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: hsl(var(--foreground) / 0.7);
+    margin-bottom: 0.25rem;
+  }
+
+  &__empty-hint {
+    font-size: 0.8125rem;
+  }
+
+  // Schedule items
+  &__schedule-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__schedule-item {
+    border: 1px solid hsl(var(--border) / 0.7);
+    border-radius: $radius-lg;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    background: hsl(var(--card));
+    transition: border-color 0.25s, box-shadow 0.25s;
+
+    @include sm { padding: 1.5rem; }
+
+    &:hover {
+      border-color: hsl(var(--primary) / 0.25);
+      box-shadow: 0 4px 20px hsl(var(--primary) / 0.06);
+    }
+  }
+
+  &__schedule-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  &__schedule-item-left {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-width: 0;
+  }
+
+  &__schedule-name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+
+  &__schedule-meta {
+    font-size: 0.75rem;
+    color: hsl(var(--muted-foreground));
+    margin-top: 0.125rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__delete-btn {
+    color: hsl(var(--muted-foreground));
+    flex-shrink: 0;
+    transition: color 0.2s, transform 0.2s $ease-spring;
+
+    &:hover {
+      color: hsl(var(--destructive));
+      transform: scale(1.15);
+    }
+
+    svg { width: 1rem; height: 1rem; }
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: hsl(var(--muted-foreground));
+    display: block;
+    margin-bottom: 0.625rem;
+  }
+
+  // Day pills
+  &__days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__day-btn {
+    width: 3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: transform 0.15s $ease-spring;
+
+    @include sm { width: 3.25rem; font-size: 0.8125rem; }
+
+    &:hover { transform: scale(1.08); }
+
+    &--active {
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+      color: hsl(var(--primary-foreground));
+      border-color: transparent;
+      box-shadow: 0 3px 10px hsl(var(--primary) / 0.35);
+    }
+  }
+
+  // Time slots
+  &__time-slots-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+
+    @include sm {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &__add-time-btn {
+    width: 100%;
+    font-size: 0.8125rem;
+
+    @include sm { width: auto; }
+
+    svg {
+      width: 0.75rem;
+      height: 0.75rem;
+      margin-right: 0.25rem;
+      flex-shrink: 0;
+    }
+  }
+
+  &__time-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  &__time-slot {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    background: hsl(var(--muted) / 0.4);
+    border-radius: $radius-md;
+    padding: 0.375rem 0.5rem 0.375rem 0.75rem;
+    transition: background-color 0.2s;
+
+    &:hover { background: hsl(var(--muted) / 0.7); }
+  }
+
+  &__time-icon {
+    width: 0.9375rem;
+    height: 0.9375rem;
+    color: hsl(var(--primary));
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+
+  &__time-input {
+    flex: 1;
+    font-size: 0.875rem;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+
+    &:focus { ring: none; box-shadow: none; }
+  }
+
+  &__remove-time-btn {
+    color: hsl(var(--muted-foreground));
+    flex-shrink: 0;
+    transition: color 0.2s, transform 0.2s $ease-spring;
+
+    &:hover {
+      color: hsl(var(--destructive));
+      transform: scale(1.15) rotate(90deg);
+    }
+
+    svg { width: 0.9375rem; height: 0.9375rem; }
+  }
+
+  &__duration-input {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  // Summary
+  &__summary {
+    padding: 0.875rem;
+    border-radius: $radius-md;
+    background: hsl(var(--primary) / 0.05);
+    border: 1px solid hsl(var(--primary) / 0.12);
+    font-size: 0.8125rem;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.5;
+
+    @include sm { font-size: 0.875rem; }
+  }
+
+  &__summary-label {
+    font-weight: 700;
+    color: hsl(var(--primary));
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+    animation: slideUp 0.4s $ease-out 0.15s both;
+  }
+
+  &__save-btn {
+    width: 100%;
+
+    @include sm { width: auto; }
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// ══════════════════════════════════════
+// HISTORY SECTION
+// ══════════════════════════════════════
+.history {
+  &__header {
+    margin-bottom: 2rem;
+    animation: slideDown 0.4s $ease-out both;
+  }
+
+  &__title {
+    @extend %section-title;
+    margin-bottom: 0.375rem;
+  }
+
+  &__subtitle {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  &__table-wrapper {
+    // Scrollable zone: all axes
+    overflow: auto;
+
+    // Mobile: dvh minus topbar(3.5rem) + bottom-nav(4rem) + section header + card header + padding
+    max-height: calc(100dvh - 22rem);
+
+    // Tablet: a bit more breathing room
+    @include sm  { max-height: calc(100dvh - 20rem); }
+
+    // Desktop: no topbar / bottom nav, just section header + card header + padding
+    @include lg  { max-height: calc(100dvh - 14rem); }
+
+    // Thin scrollbars
+    &::-webkit-scrollbar       { width: 4px; height: 4px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb {
+      background: hsl(var(--border));
+      border-radius: $radius-full;
+    }
+
+    // Sticky column headers — stay locked while rows scroll
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: hsl(var(--card));
+      box-shadow: 0 1px 0 hsl(var(--border));
+    }
+  }
+
+  &__table-cell {
+    font-size: 0.8125rem;
+
+    @include sm { font-size: 0.875rem; }
+  }
+
+  &__badge {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+}
