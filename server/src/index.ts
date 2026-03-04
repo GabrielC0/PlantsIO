@@ -14,6 +14,7 @@ import { abortSessionOnEspDisconnect } from './services/pump.service'
 import { attachEspGateway, setOnEspDisconnect } from './websocket/esp.gateway'
 import { connectAdafruit } from './services/adafruit.service'
 import { errorHandler } from './middleware/errorHandler'
+import { serviceRouterMiddleware, SERVICE_PREFIX_PLANTSIO, SERVICE_PREFIX_ENABLED } from './middleware/serviceRouter'
 
 import healthRouter    from './routes/health'
 import espRouter       from './routes/esp'
@@ -55,6 +56,12 @@ async function bootstrap(): Promise<void> {
   app.use(express.json())
   app.use(morgan(env.NODE_ENV === 'development' ? 'dev' : 'combined'))
 
+  // ── Service router : préfixe /plantsio (optionnel si SERVICE_PREFIX_ENABLED=false) ──
+  app.use(serviceRouterMiddleware)
+
+  // ── Routes ─────────────────────────────────────────────────────────────────
+  // Avec préfixe activé  : /plantsio/health, /plantsio/api/v1/...
+  // Avec préfixe désactivé : /health, /api/v1/... (compatibilité)
   app.use('/',        healthRouter)
   app.use('/api/v1',  espRouter)
   app.use('/api/v1',  systemRouter)
@@ -74,10 +81,17 @@ async function bootstrap(): Promise<void> {
 
   attachEspGateway(espWss)
 
-  server.on('upgrade', (req, socket, head) => {
-    const url = new URL(req.url!, `http://${req.headers.host}`)
+  // Chemins WebSocket acceptés :  /plantsio/esp  (préfixe activé)
+  //                                /esp           (préfixe désactivé / backward compat)
+  const WS_PATH_PREFIXED = `/${SERVICE_PREFIX_PLANTSIO}/esp`
+  const WS_PATH_BARE     = '/esp'
 
-    if (url.pathname === '/esp') {
+  server.on('upgrade', (req, socket, head) => {
+    const url      = new URL(req.url!, `http://${req.headers.host}`)
+    const accepted = SERVICE_PREFIX_ENABLED ? WS_PATH_PREFIXED : WS_PATH_BARE
+
+    // Accepter aussi le chemin sans préfixe pour l'ESP32 existant
+    if (url.pathname === accepted || url.pathname === WS_PATH_BARE || url.pathname === WS_PATH_PREFIXED) {
       if (url.searchParams.get('token') !== env.ESP32_WS_SECRET) {
         console.warn('[WS:ESP] Rejected — invalid token')
         socket.destroy()
@@ -95,10 +109,13 @@ async function bootstrap(): Promise<void> {
 
   // ── Listen ─────────────────────────────────────────────────────
   server.listen(env.PORT, () => {
+    const prefix = SERVICE_PREFIX_ENABLED ? `/${SERVICE_PREFIX_PLANTSIO}` : ''
     console.log(`\n🌱 PlantsIO Server`)
-    console.log(`   HTTP  → http://localhost:${env.PORT}`)
-    console.log(`   WS    → ws://localhost:${env.PORT}/esp  (ESP32)`)
-    console.log(`   Env   → ${env.NODE_ENV}\n`)
+    console.log(`   HTTP  → http://localhost:${env.PORT}${prefix}`)
+    console.log(`   API   → http://localhost:${env.PORT}${prefix}/api/v1`)
+    console.log(`   WS    → ws://localhost:${env.PORT}${prefix}/esp  (ESP32)`)
+    console.log(`   Env   → ${env.NODE_ENV}`)
+    console.log(`   Préfixe → ${SERVICE_PREFIX_ENABLED ? `activé (${prefix})` : 'désactivé'}\n`)
   })
 
   // ── Graceful shutdown ───────────────────────────────────────────

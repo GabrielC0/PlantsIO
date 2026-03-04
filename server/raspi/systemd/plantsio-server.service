@@ -1,0 +1,37 @@
+[Unit]
+Description=PlantsIO Server – API irrigation Raspberry Pi
+Documentation=https://github.com/GabrielC0/PlantsIO
+After=network.target mariadb.service
+Wants=mariadb.service
+
+[Service]
+Type=simple
+
+# ── Répertoire de travail ──────────────────────────────────────────────────────
+WorkingDirectory=/home/pi/rem0teApi/PlantsIO/server
+
+# ── Variables d'environnement supplémentaires (le .env est chargé par dotenv) ──
+Environment=NODE_ENV=production
+Environment=RASPBERRY_PI=true
+
+# ── Build TypeScript avant démarrage ──────────────────────────────────────────
+ExecStartPre=/usr/bin/npm run build
+
+# ── Démarrage ─────────────────────────────────────────────────────────────────
+ExecStart=/usr/bin/node dist/index.js
+
+# ── Redémarrage automatique ────────────────────────────────────────────────────
+Restart=on-failure
+RestartSec=5
+
+# ── Utilisateur ───────────────────────────────────────────────────────────────
+User=pi
+Group=pi
+
+# ── Journalisation ────────────────────────────────────────────────────────────
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=plantsio-server
+
+[Install]
+WantedBy=multi-user.target
