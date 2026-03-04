@@ -91,9 +91,29 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: var(--font-sans, sans-serif);
+    font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: -0.011em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+  }
+
+  code, kbd, pre, samp {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 0.875em;
+  }
+
+  input, button, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
   }
 }
 

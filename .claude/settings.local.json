@@ -13,7 +13,11 @@
       "Bash(cp:*)",
       "Bash(mv node_modules:*)",
       "Bash(rm:*)",
-      "Bash(npm run:)"
+      "Bash(npm run:)",
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }
